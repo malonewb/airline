@@ -1,0 +1,29 @@
+---
+title: "airline"
+output: html_document
+date: '2022-09-26'
+---
+
+```{r}
+library(nycflights13)
+library(tidyverse)
+library(here)
+library(janitor)
+```
+
+
+```{r}
+thisfile=here("raw_data","DL_SelectFields_2022.zip")
+
+df2022=read_csv(thisfile) %>% clean_names()
+```
+
+
+```{r}
+df15 = df2019 %>% filter(passengers>0, origin == "LGA" | dest== "LGA") %>%
+  group_by(month, carrier_name)
+
+
+
+df15 %>% ggplot(aes(x=month, y=average_pass-per_flight, color=carrier_name))+geom_line()
+```
