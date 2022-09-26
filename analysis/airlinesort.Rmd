@@ -4,6 +4,9 @@ output: html_document
 date: '2022-09-26'
 ---
 
+
+Work in progress.
+
 ```{r}
 library(nycflights13)
 library(tidyverse)
@@ -13,17 +16,25 @@ library(janitor)
 
 
 ```{r}
-thisfile=here("raw_data","DL_SelectFields_2022.zip")
+thisfile=here("raw_data","DL_SelectFields2022.zip")
 
 df2022=read_csv(thisfile) %>% clean_names()
 ```
 
 
 ```{r}
-df15 = df2019 %>% filter(passengers>0, origin == "LGA" | dest== "LGA") %>%
-  group_by(month, carrier_name)
+df15 = df2022 %>% filter(passengers>0, carrier_name == "Republic Airline", origin == "LGA")
 
 
 
-df15 %>% ggplot(aes(x=month, y=average_pass-per_flight, color=carrier_name))+geom_line()
+df15 %>% ggplot(aes(x=month, y=passengers, color = dest))+geom_line()
+```
+
+
+```{r}
+df15 = df2022 %>% filter(passengers>0, origin == "LGA")
+
+
+
+df15 %>% ggplot(aes(x=month, y=passengers, color = carrier_name))+geom_line()
 ```
