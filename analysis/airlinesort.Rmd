@@ -5,7 +5,7 @@ date: '2022-09-26'
 ---
 
 
-Work in progress.
+SWork in progress.
 
 ```{r}
 library(nycflights13)
@@ -37,4 +37,5 @@ df15 = df2022 %>% filter(passengers>0, origin == "LGA")
 
 
 df15 %>% ggplot(aes(x=month, y=passengers, color = carrier_name))+geom_line()
+
 ```
