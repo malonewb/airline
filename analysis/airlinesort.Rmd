@@ -32,9 +32,18 @@ df15 %>% ggplot(aes(x=month, y=passengers, color = dest))+geom_line()
 
 
 ```{r}
-df15 = df2022 %>% filter(passengers>0, origin == "LGA")
+df16 = df2022 %>% filter(passengers>0, origin == "LGA")
+
+
+df16 %>% ggplot(aes(x=month, y=passengers, color = carrier_name))+geom_line()
+```
+
+
+```{r}
+df17 = df2022 %>% filter(passengers>0, origin == "LGA" | dest== "LGA") %>%
+  group_by(month, carrier_name)
 
 
 
-df15 %>% ggplot(aes(x=month, y=passengers, color = carrier_name))+geom_line()
+df17 %>% ggplot(aes(x=month, y=average_pass-per_flight, color=carrier_name))+geom_line()
 ```
