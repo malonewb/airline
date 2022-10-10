@@ -14,14 +14,15 @@ library(janitor)
 ```{r}
 thisfile=here("raw_data","CU_ACAD_DEPT_WHEN_OFF_ENRL_22740.zip")
 
-cuMa2022 = readxl::read_excel(thisfile) %>% clean_names()
+cuMa2022 = read_csv(thisfile) %>% clean_names()
 ```
 
 
 ```{r}
-madata = cuMa2022 %>% filter (x3 == 008732 | x3 == 008733) %>% 
-  group_by(x3)
+ma131data = cuMa2022 %>% filter (course_id == 8732)
+ma132data = cuMa2022 %>% filter(course_id == 8733)
 
 
-madata %>% ggplot(aes(x = x7, y = x10))+geom_histogram()
+ma131data %>% ggplot(aes(x = term_7, y = tot_enrl))+geom_col()
+ma132data %>% ggplot(aes(x = term_7, y = tot_enrl))+geom_col()
 ```
