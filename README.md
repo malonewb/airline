@@ -1,3 +1,3 @@
-# airline
-analysis for airline data
-This is a line from R studio
+# DS Class
+All work written in class and for homework
+Contains Airplane Data and MA131+132 Analysis Data
