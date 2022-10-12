@@ -19,10 +19,10 @@ cuMa2022 = read_csv(thisfile) %>% clean_names()
 
 
 ```{r}
-ma131data = cuMa2022 %>% filter (course_id == 8732)
-ma132data = cuMa2022 %>% filter(course_id == 8733)
+ma131data = cuMa2022 %>% filter (course_id == 8732) %>% distinct() %>% summarise()
+ma132data = cuMa2022 %>% filter(course_id == 8733) %>% distinct() %>% summarise()
 
 
-ma131data %>% ggplot(aes(x = term_7, y = tot_enrl))+geom_col()
-ma132data %>% ggplot(aes(x = term_7, y = tot_enrl))+geom_col()
+# ma131data %>% ggplot(aes(x = term_7, y = tot_enrl))+geom_col()
+# ma132data %>% ggplot(aes(x = term_7, y = tot_enrl))+geom_col()
 ```
