@@ -1,0 +1,89 @@
+---
+title: "Minsun Kim_MA132"
+output: html_document
+date: "2022-10-09"
+---
+```{r}
+library(tidyverse)
+library(here)
+library(janitor)
+```
+
+```{r}
+#filter and make a dataframe which we want to analyze
+thisfile = here("raw_data","CU_ACAD_DEPT_WHEN_OFF_ENRL_22740.csv")
+df = read_csv(thisfile) %>% clean_names() %>% 
+  filter(Component == "LEC", Course_ID %in% c(8732, 8733), startsWith(Term, "Fall") | startsWith(Term, "Spring")) %>%
+  select(course_ID, Catalog, Term, Term, Title, Tot_Enrl, Section)
+```
+
+```{r}
+#get 'past' data which don't include spring 22
+df_ma132_s = df %>% filter(course_id == 8733, startsWith(term2, "Spring")) %>% 
+  group_by(term2) %>%
+  summarise(ma132_s = sum(tot_enrl)) %>%
+  filter(ma132_s > 0)
+```
+
+```{r}
+#get enrollment of ma131 in fall of all year 
+df_ma131_f = df %>% filter(course_id == 8732, startsWith(term2, "Fall")) %>%
+  group_by(term2) %>%
+  summarise(ma131_enrl_f = sum(tot_enrl)) %>%
+  filter(ma131_enrl_f > 0)
+```
+
+```{r}
+# get enrollment of ma132 in f1, f23, and spring (of all year)
+df_ma132_f1 = df %>% filter(course_id == 8733, startsWith(term2, "Fall"), section == 1) %>%
+  group_by(term2) %>%
+  summarise(ma132_enrl_f1 = sum(tot_enrl)) %>%
+  filter(ma132_enrl_f1 > 0)
+
+df_ma132_f23 = df %>% filter(course_id == 8733, startsWith(term2, "Fall"), section == 2 | section == 3) %>%
+  group_by(term2) %>%
+  summarise(ma132_enrl_f23 = sum(tot_enrl)) %>%
+  filter(ma132_enrl_f23 > 0)
+
+df_ma132_s = df %>% filter(course_id == 8733, startsWith(term2, "Spring")) %>%
+  group_by(term2) %>%
+  summarise(ma132_enrl_s = sum(tot_enrl)) %>%
+  filter(ma132_enrl_s > 0)
+```
+
+```{r}
+# make a dataframe of enrollment of ma131 in fall and ma132 in fall and spring and organizing by year
+df2 = cbind(df_ma132_f1, df_ma132_f23, df_ma131_f)
+df2 <- df2[, !duplicated(colnames(df2), fromLast=TRUE)]
+
+df2 = df2 %>% mutate(year = strtoi(substr(term2, nchar(term2)-4, nchar(term2))) + 1) %>%
+  select(year, ma131_enrl_f, ma132_enrl_f1, ma132_enrl_f23)
+
+df_ma132_s = df_ma132_s %>% add_row(term2 = "Spring 2022", ma132_enrl_s = NA)
+df2 = cbind(df2, df_ma132_s$ma132_enrl_s)
+
+df2 = df2 %>% mutate(ma132_enrl_f = ma132_enrl_f1 + ma132_enrl_f23)
+```
+
+```{r}
+#make a visualization for useful data : Spring Enrollment in ma132
+df3 = df2 %>% ggplot(aes(x = year, y = df_ma132_s$ma132_enrl_s)) + geom_point() + 
+  ggtitle("Spring Enrollment in MA 132") + xlab("Year") + ylab("Number of Students") +
+  ylim(0, 600)
+df3
+
+#make a visualization for useful data : ma131 fall vs ma132 spring
+df4 = df2 %>% ggplot(aes(x = ma131_enrl_f, y = df_ma132_s$ma132_enrl_s)) + geom_point() + 
+  ggtitle("MA131 fall vs MA132 spring") + xlab("Number of Students for ma131 fall") + ylab("Number of Students for ma132 spring") +
+  ylim(200, 600) + xlim(400,600)
+df4
+```
+
+```{r}
+#Spring enrollments increase as year is recent, and there is a positive relationship between ma131 fall and ma132 spring, which means if the bigger number of enrollment of ma131 the bigger number of enrollment of ma132. 
+#We can get a slope in regression line at df4, which means we can calculate the rate of increasing average of enrollment of ma132 spring per unit of increasing enrollment of ma131 of fall. 
+```
+
+
+
+
